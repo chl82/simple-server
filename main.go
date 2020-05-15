@@ -322,16 +322,11 @@ func serveGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error: %v", err)
 
-		if _, ok := err.(*os.PathError); ok {
+		if os.IsNotExist(err) {
 			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		switch err {
-		case os.ErrNotExist:
-			w.WriteHeader(http.StatusNotFound)
-		case os.ErrPermission:
+		} else if os.IsPermission(err) {
 			w.WriteHeader(http.StatusUnauthorized)
-		default:
+		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
@@ -354,16 +349,11 @@ func listDir(w http.ResponseWriter, r *http.Request, fullPath string) {
 	if err != nil {
 		log.Printf("Error: %v", err)
 
-		if _, ok := err.(*os.PathError); ok {
+		if os.IsNotExist(err) {
 			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		switch err {
-		case os.ErrNotExist:
-			w.WriteHeader(http.StatusNotFound)
-		case os.ErrPermission:
+		} else if os.IsPermission(err) {
 			w.WriteHeader(http.StatusUnauthorized)
-		default:
+		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
@@ -405,16 +395,11 @@ func sendFile(w http.ResponseWriter, fullPath string) {
 	if err != nil {
 		log.Printf("Error: %v", err)
 
-		if _, ok := err.(*os.PathError); ok {
+		if os.IsNotExist(err) {
 			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		switch err {
-		case os.ErrNotExist:
-			w.WriteHeader(http.StatusNotFound)
-		case os.ErrPermission:
+		} else if os.IsPermission(err) {
 			w.WriteHeader(http.StatusUnauthorized)
-		default:
+		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
