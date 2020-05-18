@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -345,7 +346,7 @@ func localPath(path string) string {
 }
 
 func listDir(w http.ResponseWriter, r *http.Request, fullPath string) {
-	file, err := os.Open(fullPath)
+	infos, err := ioutil.ReadDir(fullPath)
 	if err != nil {
 		log.Printf("Error: %v", err)
 
@@ -356,14 +357,6 @@ func listDir(w http.ResponseWriter, r *http.Request, fullPath string) {
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-		return
-	}
-	defer file.Close()
-
-	infos, err := file.Readdir(0)
-	if err != nil {
-		log.Printf("Error: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
